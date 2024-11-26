@@ -11,4 +11,4 @@ ws = { package="rocket_ws", version = "0.1.0" }
 base64 = "0.22"
 curve25519-dalek = "4.1.3"
 acl = { path = "../acl" }
-
+jsonwebtoken = { path = "../jsonwebtoken" }
