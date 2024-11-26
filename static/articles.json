@@ -1,0 +1,65 @@
+[
+  {
+    "headline": "Privacy-Conscious AI Refuses to Remember Anything, Becomes Useless",
+    "category": "tech",
+    "date": "2024-11-24",
+    "story": "In an effort to address rising privacy concerns, a tech startup introduced an AI assistant that forgets everything it hears within five seconds. While the concept was initially praised as a revolutionary leap in privacy protection, it has become apparent that the AI is, for lack of a better term, completely useless. 'It’s like talking to a goldfish,' said one frustrated beta tester, who reported needing to repeat every command multiple times. The AI, named 'SafeMind,' was designed to process requests locally and then immediately erase any memory of the interaction. While this ensures unparalleled privacy, it has left users unable to get anything done. 'I told it to add milk to my shopping list, and two seconds later, it acted like we’d never met,' said another user. The company has announced plans to add a '10-second memory mode' but remains unsure if this will improve user satisfaction or simply double the frustration.",
+    "author": "Jane Doe"
+  },
+  {
+    "headline": "Anonymous Hacktivists Accidentally Dox Themselves in Encrypted Group Chat",
+    "category": "tech",
+    "date": "2024-11-24",
+    "story": "A group of hacktivists known for their online anonymity made headlines this week after accidentally doxxing themselves in their own encrypted group chat. The group, known as 'ShadowZero,' was reportedly discussing plans for a high-profile cyber operation when one member mistakenly shared their home address, assuming they were sending a private message. To make matters worse, other members followed suit, sharing their own addresses in solidarity before realizing the mistake. 'It was a disaster,' admitted one member. 'We were supposed to be exposing corruption, not exposing ourselves.' The group has since rebranded as 'ShadowOops' and vowed to take a cybersecurity course before their next operation. Meanwhile, law enforcement agencies, upon seeing the leaked addresses, have been too busy laughing to take any action.",
+    "author": "John Crypto"
+  },
+  {
+    "headline": "Nation-State Develops Crypto So Secure Even They Can’t Use It",
+    "category": "tech",
+    "date": "2024-11-24",
+    "story": "In a stunning display of technological ambition gone awry, a small nation-state proudly announced the creation of a quantum-proof cryptographic system that is so secure, not even its creators can use it. The system, called 'LockdownX,' was designed to protect sensitive communications against future quantum computing threats. However, it appears that the encryption is so advanced that all encrypted messages have become permanently inaccessible, including critical government files. 'We’ve secured ourselves into oblivion,' admitted the head of the project. The nation’s officials are now resorting to carrier pigeons and handwritten notes to communicate. 'On the bright side,' a government spokesperson said, 'no one, not even us, can leak classified information now.' International cryptography experts are calling it a cautionary tale about over-engineering, while Twitter users have dubbed it 'the Fort Knox of file deletion.'",
+    "author": "Pat Key"
+  },
+  {
+    "headline": "New Privacy-Focused Smart Assistant Only Responds to Morse Code",
+    "category": "tech",
+    "date": "2024-11-24",
+    "story": "Tech company PrivacyFirst has unveiled a new smart assistant that only listens to commands delivered in Morse code, in a bid to address privacy concerns. Dubbed 'DotBot,' the device refuses to process spoken commands to prevent unauthorized eavesdropping. Early adopters are calling it a 'secure but exhausting' product. 'I had to tap out an SOS just to ask it to play music,' one user complained. The assistant has no microphones and relies entirely on a small tap pad for input, which it claims eliminates the possibility of hacking. Privacy advocates have praised the innovation, while critics argue that it caters only to a niche audience of Morse code enthusiasts. The company's CEO defended the decision, stating, 'Sure, it’s not for everyone, but neither is privacy.' Meanwhile, DotBot sales have unexpectedly surged among amateur radio operators, who see it as a retro-futuristic toy rather than a productivity tool.",
+    "author": "Dot Dash"
+  },
+  {
+    "headline": "VPN Service Accidentally Routes All Traffic to One Guy’s Laptop",
+    "category": "tech",
+    "date": "2024-11-24",
+    "story": "A widely used VPN service faced massive outages this week after a configuration error rerouted all global traffic to a single user's laptop in rural Idaho. The user, identified only as Carl, initially thought the slowdown in his internet was due to his cat walking on the keyboard. 'Then my fan started making jet engine noises, and I realized something was up,' Carl said. For 36 hours, Carl’s laptop acted as the internet’s central hub, processing trillions of requests. 'At one point, I think I hosted an entire Netflix series,' he joked. The VPN provider has apologized for the mistake, offering free lifetime subscriptions to all affected users—except Carl, whose laptop is now a melted pile of silicon. 'We deeply regret the incident,' the company said, 'but in fairness, Carl now knows what it feels like to be a data center.'",
+    "author": "Alice Proxy"
+  },
+  {
+    "headline": "Cryptocurrency ATM Refuses to Dispense Cash Without Dance Challenge",
+    "category": "tech",
+    "date": "2024-11-24",
+    "story": "In a bid to combine security and entertainment, a new cryptocurrency ATM requires users to perform a unique dance before dispensing cash. The machine, called 'CryptoGroove,' uses advanced motion-detection technology to verify the user’s identity through dance moves. 'We’re taking security to the next level,' said the lead developer. However, customers have expressed mixed feelings. 'I just wanted 20 bucks, and now there’s a video of me doing the Macarena circulating online,' one user complained. Others argue that the system promotes fitness, though critics worry it creates unnecessary barriers for less agile users. Meanwhile, social media platforms are flooded with clips of people attempting the 'blockchain boogie,' making CryptoGroove an unexpected viral sensation. The company insists the dance requirement is unhackable, though one enterprising coder has reportedly trained a robot to twerk on demand.",
+    "author": "Digi Coin"
+  },
+  {
+    "headline": "Password Manager Introduces 'Too Secure Mode,' Deletes Passwords If You Look at It Funny",
+    "category": "tech",
+    "date": "2024-11-24",
+    "story": "In its latest update, a popular password manager introduced a feature called 'Too Secure Mode,' which automatically deletes all stored passwords if it detects suspicious activity—or even slight user clumsiness. Beta testers have reported numerous incidents of accidental deletions, including one user who lost access to their bank account after sneezing near their phone. 'It’s like having a paranoid roommate that moves out every time you look at them sideways,' one frustrated user said. The company claims the feature is working as intended and provides unparalleled security, but critics argue it’s more of a liability than an asset. 'Security is important, but this is ridiculous,' said a cybersecurity analyst. Despite the backlash, the company is reportedly working on an even stricter mode, tentatively named 'Paranoia Plus,' which automatically wipes passwords if it detects the user thinking about sharing their login details.",
+    "author": "Sally Encryption"
+  },
+  {
+    "headline": "Privacy Enthusiast Lives Entire Year Offline, Accidentally Invents Fire",
+    "category": "tech",
+    "date": "2024-11-24",
+    "story": "In an extreme experiment, a man decided to live an entire year completely offline to escape surveillance and protect his privacy. During this time, he inadvertently reinvented fire, the wheel, and basic agriculture. 'When you’re not Googling everything, you start figuring stuff out,' he explained. The man, who refused to reveal his name for privacy reasons, lived in a remote forest and documented his progress using clay tablets. Experts say his unintentional discoveries mirror humanity’s early technological advancements. 'He basically recreated the Neolithic Revolution,' said one historian. While privacy advocates hail him as a pioneer, archaeologists are baffled by his ability to reverse-engineer ancient technology without modern tools. When asked about his plans post-experiment, the man said he might build a rudimentary internet just to prove he can do it without Big Tech.",
+    "author": "Neo Luddite"
+  },
+  {
+    "headline": "Government Announces New Surveillance Law That Only Spies on Itself",
+    "category": "tech",
+    "date": "2024-11-24",
+    "story": "In an unexpected turn of events, a government attempting to implement a controversial surveillance law accidentally drafted the legislation to only apply to its own officials. 'It was a typo,' admitted a spokesperson, 'but now all of our emails, meetings, and lunch orders are being monitored 24/7.' The law, intended to increase national security by expanding surveillance capabilities, has instead turned government offices into a real-life version of Big Brother. Public reaction has been overwhelmingly positive, with citizens enjoying the unprecedented transparency. 'I now know more about my mayor’s coffee habits than I ever wanted to,' one resident said. Meanwhile, government workers are reportedly struggling to adjust, with one official caught trying to embezzle $10 from a vending machine. 'This is what accountability looks like.'",
+    "author": "George Andbad"
+  }
+]
