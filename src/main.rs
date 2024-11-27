@@ -141,6 +141,8 @@ impl<'r> FromRequest<'r> for UserAttributes {
             &params,
         );
 
+        println!("{:?}",td);
+
         Outcome::Success(UserAttributes {
             email: None,
             tech_subscriber: None,
@@ -153,7 +155,7 @@ impl<'r> FromRequest<'r> for UserAttributes {
 #[get("/news")]
 fn news(user: UserAttributes) -> Json<Article> {
     let rawArticleData =
-        fs::read_to_string("/home/fharding/src/pseudonyws-server/static/articles.json")
+        fs::read_to_string("/Users/franklinharding/src/pseudonyws-server/static/articles.json")
             .expect("should read");
     let articles: Vec<Article> = serde_json::from_str(&rawArticleData).expect("should unmarshal");
     let mut rng = rand::thread_rng();
