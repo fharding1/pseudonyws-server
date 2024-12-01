@@ -12,3 +12,4 @@ base64 = "0.22"
 curve25519-dalek = "4.1.3"
 acl = { path = "../acl" }
 jsonwebtoken = { path = "../jsonwebtoken" }
+bincode = "1.3.3"

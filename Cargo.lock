@@ -1655,6 +1655,7 @@ version = "0.1.0"
 dependencies = [
  "acl",
  "base64 0.22.1",
+ "bincode",
  "curve25519-dalek",
  "jsonwebtoken 9.3.0",
  "rand",

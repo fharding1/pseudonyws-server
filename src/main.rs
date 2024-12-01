@@ -2,15 +2,18 @@
 extern crate rocket;
 use acl::{SigningKey, UserParameters, VerifyingKey, SECRET_KEY_LENGTH};
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
-use curve25519_dalek::ristretto::CompressedRistretto;
-use jsonwebtoken::decode_acl_selective_disclosure;
+use curve25519_dalek::ristretto::{CompressedRistretto, RistrettoPoint};
+use curve25519_dalek::scalar::Scalar;
+use jsonwebtoken::{decode_acl_selective_disclosure, key_to_generator, value_to_scalar};
 use rand::Rng;
+use rocket::form::name::Key;
 use rocket::futures::{SinkExt, StreamExt};
 use rocket::http::Status;
 use rocket::request::{self, FromRequest, Outcome, Request};
 use rocket::serde::json::{serde_json, Json};
 use rocket::State;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::fs;
 use std::str::FromStr;
 use ws::*;
@@ -47,8 +50,6 @@ fn echo(ws: WebSocket) -> Channel<'static> {
             let umsg1: UserMessage1 = serde_json::from_str(&umsg1_msg).expect("should unmarshal");
             println!("{:?}", umsg1);
 
-            // for now we ignore auxillary information
-
             // parse the commitment
             let Some(cmt) = CompressedRistretto::from_slice(
                 &URL_SAFE_NO_PAD
@@ -59,6 +60,32 @@ fn echo(ws: WebSocket) -> Channel<'static> {
             .decompress() else {
                 todo!()
             };
+
+            // check that the full disclosure auxillary information is correct
+            let aux: jsonwebtoken::FullDisclosureProof =
+                serde_json::from_str(&umsg1.aux).expect("ok");
+
+            let Value::Object(attributes) = aux.attributes else {
+                panic!("couldn't decode attributes")
+            };
+
+            let recomputed_commitment = jsonwebtoken::gen_h0()
+                * Scalar::from_canonical_bytes(
+                    URL_SAFE_NO_PAD
+                        .decode(aux.randomness)
+                        .unwrap()
+                        .try_into()
+                        .expect("fine"),
+                )
+                .unwrap()
+                + attributes
+                    .iter()
+                    .map(|(k, v)| key_to_generator(b"claim", &k) * value_to_scalar(b"", &v))
+                    .sum::<RistrettoPoint>();
+
+            if cmt != recomputed_commitment {
+                panic!("recomputed commitment does not match, refusing to sign this credential");
+            }
 
             let secret_key_bytes: [u8; SECRET_KEY_LENGTH] = [
                 157, 097, 177, 157, 239, 253, 090, 096, 186, 132, 074, 244, 146, 236, 044, 196,
@@ -129,19 +156,19 @@ impl<'r> FromRequest<'r> for UserAttributes {
             key: VerifyingKey::from(&signing_key),
         };
 
-        let td = decode_acl_selective_disclosure::<String, String>(
+        let td = decode_acl_selective_disclosure(
             raw_token,
             &[
+                "cooking_subscriber".to_string(),
                 "email".to_string(),
                 "exp".to_string(),
-                "tech_subscriber".to_string(),
                 "sports_subscriber".to_string(),
-                "cooking_subscriber".to_string(),
+                "tech_subscriber".to_string(),
             ],
             &params,
         );
 
-        println!("{:?}",td);
+        println!("{:?}", td);
 
         Outcome::Success(UserAttributes {
             email: None,
