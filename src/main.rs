@@ -125,13 +125,16 @@ struct UserAttributes {
     cooking_subscriber: Option<bool>,
 }
 
-#[derive(Debug, Clone, Hash)]
-enum TokenValue {
-    Email(String),
-    Exp(u64),
-    TechSubscriber(bool),
-    SportsSubscriber(bool),
-    CookingSubscriber(bool),
+impl UserAttributes {
+    fn keys() -> Vec<String> {
+        Vec::from([
+            "cooking_subscriber".to_string(),
+            "email".to_string(),
+            "exp".to_string(),
+            "sports_subscriber".to_string(),
+            "tech_subscriber".to_string(),
+        ])
+    }
 }
 
 #[rocket::async_trait]
@@ -148,13 +151,7 @@ impl<'r> FromRequest<'r> for UserAttributes {
 
         let td = decode_acl_selective_disclosure(
             raw_token,
-            &[
-                "cooking_subscriber".to_string(),
-                "email".to_string(),
-                "exp".to_string(),
-                "sports_subscriber".to_string(),
-                "tech_subscriber".to_string(),
-            ],
+            &UserAttributes::keys(),
             &keys_state.params.clone(),
         );
 
@@ -191,10 +188,10 @@ impl<'r> FromRequest<'r> for NewsUser {
 #[get("/news")]
 fn news(user: NewsUser) -> Json<Article> {
     println!("{:?}", user);
-    let rawArticleData =
+    let raw_article_data =
         fs::read_to_string("/home/fharding/src/pseudonyws-server/static/articles.json")
             .expect("should read");
-    let articles: Vec<Article> = serde_json::from_str(&rawArticleData).expect("should unmarshal");
+    let articles: Vec<Article> = serde_json::from_str(&raw_article_data).expect("should unmarshal");
     let mut rng = rand::thread_rng();
     Json(articles[rng.gen_range(0..articles.len())].clone())
 }
