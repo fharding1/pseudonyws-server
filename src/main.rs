@@ -121,6 +121,7 @@ fn echo(ws: WebSocket) -> Channel<'static> {
     })
 }
 
+#[derive(Serialize,Deserialize,Debug)]
 struct UserAttributes {
     email: Option<String>,
     tech_subscriber: Option<bool>,
@@ -141,7 +142,7 @@ enum TokenValue {
 impl<'r> FromRequest<'r> for UserAttributes {
     type Error = String;
 
-    async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
+    async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         let auth_header = req.headers().get_one("Authorization").expect("asdf");
         let raw_token = auth_header.strip_prefix("Bearer ").unwrap();
 
@@ -168,21 +169,41 @@ impl<'r> FromRequest<'r> for UserAttributes {
             &params,
         );
 
-        println!("{:?}", td);
+        let attr: UserAttributes = serde_json::from_value(td.unwrap().claims).unwrap();
 
-        Outcome::Success(UserAttributes {
-            email: None,
-            tech_subscriber: None,
-            sports_subscriber: None,
-            cooking_subscriber: None,
-        })
+        Outcome::Success(attr)
+    }
+}
+
+#[derive(Debug)]
+struct NewsUser(UserAttributes);
+
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for NewsUser {
+    type Error = String;
+
+    async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
+        let user = UserAttributes::from_request(req).await;
+
+        match user {
+            Outcome::Success(user) => {
+                if user.tech_subscriber.unwrap_or(false) {
+                    Outcome::Success(NewsUser(user))
+                } else {
+                    Outcome::Error((Status::Forbidden,"ur not a news user!".to_string()))
+                }
+            },
+            Outcome::Error(err) => Outcome::Error(err),
+            Outcome::Forward(status) => Outcome::Forward(status),
+        }
     }
 }
 
 #[get("/news")]
-fn news(user: UserAttributes) -> Json<Article> {
+fn news(user: NewsUser) -> Json<Article> {
+    println!("{:?}", user);
     let rawArticleData =
-        fs::read_to_string("/Users/franklinharding/src/pseudonyws-server/static/articles.json")
+        fs::read_to_string("/home/fharding/src/pseudonyws-server/static/articles.json")
             .expect("should read");
     let articles: Vec<Article> = serde_json::from_str(&rawArticleData).expect("should unmarshal");
     let mut rng = rand::thread_rng();
