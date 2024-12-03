@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fs;
 use std::str::FromStr;
+use std::sync::Arc;
 use ws::*;
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -38,7 +39,9 @@ struct UserMessage2 {
 }
 
 #[get("/grant")]
-fn echo(ws: WebSocket) -> Channel<'static> {
+fn echo(ws: WebSocket, keys_state: &State<Keys>) -> Channel<'static> {
+    let signing_key = keys_state.signing_key.clone();
+
     ws.channel(move |mut stream| {
         Box::pin(async move {
             let Some(raw_umsg1_msg) = stream.next().await else {
@@ -87,13 +90,6 @@ fn echo(ws: WebSocket) -> Channel<'static> {
                 panic!("recomputed commitment does not match, refusing to sign this credential");
             }
 
-            let secret_key_bytes: [u8; SECRET_KEY_LENGTH] = [
-                157, 097, 177, 157, 239, 253, 090, 096, 186, 132, 074, 244, 146, 236, 044, 196,
-                068, 073, 197, 105, 123, 050, 105, 025, 112, 059, 172, 003, 028, 174, 127, 096,
-            ];
-
-            let signing_key: SigningKey = SigningKey::from_bytes(&secret_key_bytes);
-
             let (ss, smsg1) = signing_key.prepare(&cmt).expect("ok");
 
             let _ = stream.send(Message::Binary(smsg1)).await;
@@ -121,7 +117,7 @@ fn echo(ws: WebSocket) -> Channel<'static> {
     })
 }
 
-#[derive(Serialize,Deserialize,Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 struct UserAttributes {
     email: Option<String>,
     tech_subscriber: Option<bool>,
@@ -143,18 +139,11 @@ impl<'r> FromRequest<'r> for UserAttributes {
     type Error = String;
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let auth_header = req.headers().get_one("Authorization").expect("asdf");
+        let auth_header = req.headers().get_one("Authorization").unwrap();
         let raw_token = auth_header.strip_prefix("Bearer ").unwrap();
 
-        let secret_key_bytes: [u8; SECRET_KEY_LENGTH] = [
-            157, 097, 177, 157, 239, 253, 090, 096, 186, 132, 074, 244, 146, 236, 044, 196, 068,
-            073, 197, 105, 123, 050, 105, 025, 112, 059, 172, 003, 028, 174, 127, 096,
-        ];
-
-        let signing_key: SigningKey = SigningKey::from_bytes(&secret_key_bytes);
-
-        let params = UserParameters {
-            key: VerifyingKey::from(&signing_key),
+        let Outcome::Success(keys_state) = req.guard::<&State<Keys>>().await else {
+            panic!()
         };
 
         let td = decode_acl_selective_disclosure(
@@ -166,7 +155,7 @@ impl<'r> FromRequest<'r> for UserAttributes {
                 "sports_subscriber".to_string(),
                 "tech_subscriber".to_string(),
             ],
-            &params,
+            &keys_state.params.clone(),
         );
 
         let attr: UserAttributes = serde_json::from_value(td.unwrap().claims).unwrap();
@@ -190,9 +179,9 @@ impl<'r> FromRequest<'r> for NewsUser {
                 if user.tech_subscriber.unwrap_or(false) {
                     Outcome::Success(NewsUser(user))
                 } else {
-                    Outcome::Error((Status::Forbidden,"ur not a news user!".to_string()))
+                    Outcome::Error((Status::Forbidden, "ur not a news user!".to_string()))
                 }
-            },
+            }
             Outcome::Error(err) => Outcome::Error(err),
             Outcome::Forward(status) => Outcome::Forward(status),
         }
@@ -210,7 +199,29 @@ fn news(user: NewsUser) -> Json<Article> {
     Json(articles[rng.gen_range(0..articles.len())].clone())
 }
 
+struct Keys {
+    signing_key: Arc<SigningKey>,
+    params: Arc<UserParameters>,
+}
+
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![news, echo])
+    let secret_key_bytes: [u8; SECRET_KEY_LENGTH] = [
+        157, 097, 177, 157, 239, 253, 090, 096, 186, 132, 074, 244, 146, 236, 044, 196, 068, 073,
+        197, 105, 123, 050, 105, 025, 112, 059, 172, 003, 028, 174, 127, 096,
+    ];
+
+    let signing_key = SigningKey::from_bytes(&secret_key_bytes);
+    let params = UserParameters {
+        key: VerifyingKey::from(&signing_key),
+    };
+
+    let key_state = Keys {
+        signing_key: Arc::new(signing_key),
+        params: Arc::new(params),
+    };
+
+    rocket::build()
+        .manage(key_state)
+        .mount("/", routes![news, echo])
 }
