@@ -51,7 +51,6 @@ fn echo(ws: WebSocket, keys_state: &State<Keys>) -> Channel<'static> {
                 todo!()
             };
             let umsg1: UserMessage1 = serde_json::from_str(&umsg1_msg).expect("should unmarshal");
-            println!("{:?}", umsg1);
 
             // parse the commitment
             let Some(cmt) = CompressedRistretto::from_slice(
@@ -185,7 +184,7 @@ impl<'r> FromRequest<'r> for NewsUser {
     }
 }
 
-#[get("/news")]
+#[get("/tech")]
 fn news(user: NewsUser) -> Json<Article> {
     println!("{:?}", user);
     let raw_article_data =
