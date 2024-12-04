@@ -44,6 +44,8 @@ fn echo(ws: WebSocket, keys_state: &State<Keys>) -> Channel<'static> {
 
     ws.channel(move |mut stream| {
         Box::pin(async move {
+            println!("someone is asking me to grant them a token...");
+
             let Some(raw_umsg1_msg) = stream.next().await else {
                 todo!()
             };
@@ -51,6 +53,8 @@ fn echo(ws: WebSocket, keys_state: &State<Keys>) -> Channel<'static> {
                 todo!()
             };
             let umsg1: UserMessage1 = serde_json::from_str(&umsg1_msg).expect("should unmarshal");
+
+            println!("got message {:?}", umsg1);
 
             // parse the commitment
             let Some(cmt) = CompressedRistretto::from_slice(
@@ -89,9 +93,13 @@ fn echo(ws: WebSocket, keys_state: &State<Keys>) -> Channel<'static> {
                 panic!("recomputed commitment does not match, refusing to sign this credential");
             }
 
+            println!("commitment and auxillary information are consistent");
+
             let (ss, smsg1) = signing_key.prepare(&cmt).expect("ok");
 
             let _ = stream.send(Message::Binary(smsg1)).await;
+
+            println!("sent prepare message");
 
             let Some(raw_umsg2_msg) = stream.next().await else {
                 todo!()
@@ -100,6 +108,8 @@ fn echo(ws: WebSocket, keys_state: &State<Keys>) -> Channel<'static> {
                 todo!()
             };
             let umsg2: UserMessage2 = serde_json::from_str(&umsg2_msg).expect("should unmarshal");
+
+            println!("got user challenge");
 
             let challenge_bytes_buf: Vec<u8> = URL_SAFE_NO_PAD
                 .decode(umsg2.challenge_bytes)
@@ -110,6 +120,8 @@ fn echo(ws: WebSocket, keys_state: &State<Keys>) -> Channel<'static> {
                 .expect("no error");
 
             let _ = stream.send(Message::Binary(pre_sig)).await;
+
+            println!("sent presignature, credential is issued");
 
             Ok(())
         })
@@ -122,6 +134,7 @@ struct UserAttributes {
     tech_subscriber: Option<bool>,
     sports_subscriber: Option<bool>,
     cooking_subscriber: Option<bool>,
+    exp: Option<u32>,
 }
 
 impl UserAttributes {
@@ -156,6 +169,11 @@ impl<'r> FromRequest<'r> for UserAttributes {
 
         let attr: UserAttributes = serde_json::from_value(td.unwrap().claims).unwrap();
 
+        // technically this should prob check that the token is unexpired, or
+        // decode_acl_selective_disclosure should
+
+        println!("decoded selectively disclosed acl credential: {:?}", attr);
+
         Outcome::Success(attr)
     }
 }
@@ -186,9 +204,8 @@ impl<'r> FromRequest<'r> for NewsUser {
 
 #[get("/tech")]
 fn news(user: NewsUser) -> Json<Article> {
-    println!("{:?}", user);
     let raw_article_data =
-        fs::read_to_string("/home/fharding/src/pseudonyws-server/static/articles.json")
+        fs::read_to_string("/Users/franklinharding/src/pseudonyws-server/static/articles.json")
             .expect("should read");
     let articles: Vec<Article> = serde_json::from_str(&raw_article_data).expect("should unmarshal");
     let mut rng = rand::thread_rng();
